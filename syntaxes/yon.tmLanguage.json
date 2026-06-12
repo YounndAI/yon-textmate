@@ -1,0 +1,907 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "YON",
+  "scopeName": "source.yon",
+  "fileTypes": ["yon"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#block-json" },
+    { "include": "#block-ts" },
+    { "include": "#block-tsx" },
+    { "include": "#block-js" },
+    { "include": "#block-jsx" },
+    { "include": "#block-css" },
+    { "include": "#block-scss" },
+    { "include": "#block-html" },
+    { "include": "#block-md" },
+    { "include": "#block-yaml" },
+    { "include": "#block-toml" },
+    { "include": "#block-xml" },
+    { "include": "#block-sql" },
+    { "include": "#block-graphql" },
+    { "include": "#block-py" },
+    { "include": "#block-rust" },
+    { "include": "#block-go" },
+    { "include": "#block-java" },
+    { "include": "#block-kotlin" },
+    { "include": "#block-swift" },
+    { "include": "#block-c" },
+    { "include": "#block-cpp" },
+    { "include": "#block-csharp" },
+    { "include": "#block-ruby" },
+    { "include": "#block-php" },
+    { "include": "#block-lua" },
+    { "include": "#block-r" },
+    { "include": "#block-bash" },
+    { "include": "#block-ps1" },
+    { "include": "#block-diff" },
+    { "include": "#block-dockerfile" },
+    { "include": "#block-terraform" },
+    { "include": "#block-prisma" },
+    { "include": "#block-proto" },
+    { "include": "#block-svg" },
+    { "include": "#block-csv" },
+    { "include": "#block-yon" },
+    { "include": "#block-fallback" },
+    { "include": "#record" }
+  ],
+  "repository": {
+    "comment": {
+      "match": "^(#)(.*)$",
+      "captures": {
+        "1": { "name": "punctuation.definition.comment.yon" },
+        "2": { "name": "comment.line.number-sign.yon" }
+      }
+    },
+
+    "record": {
+      "begin": "^\\s*(@[A-Z][A-Z0-9_]*)",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.tag.yon" }
+      },
+      "end": "$",
+      "patterns": [
+        { "include": "#record-fields" }
+      ]
+    },
+
+    "field": {
+      "patterns": [
+        { "include": "#field-typed" },
+        { "include": "#field-plain" }
+      ]
+    },
+
+    "field-typed": {
+      "match": "([a-zA-Z_][a-zA-Z0-9_]*)(:)(str|bool|int|float|ts|ref|bytes|stream|vector)(=)",
+      "captures": {
+        "1": { "name": "variable.other.key.yon" },
+        "2": { "name": "punctuation.separator.type.yon" },
+        "3": { "name": "storage.type.yon" },
+        "4": { "name": "keyword.operator.assignment.yon" }
+      }
+    },
+
+    "field-plain": {
+      "match": "([a-zA-Z_][a-zA-Z0-9_]*)(=)",
+      "captures": {
+        "1": { "name": "variable.other.key.yon" },
+        "2": { "name": "keyword.operator.assignment.yon" }
+      }
+    },
+
+    "pipe": {
+      "match": "\\|",
+      "name": "punctuation.separator.pipe.yon"
+    },
+
+    "string": {
+      "begin": "\"",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yon" } },
+      "end": "\"",
+      "endCaptures": { "0": { "name": "punctuation.definition.string.end.yon" } },
+      "name": "string.quoted.double.yon",
+      "patterns": [
+        {
+          "match": "\\\\[\"\\\\nt]",
+          "name": "constant.character.escape.yon"
+        }
+      ]
+    },
+
+    "list": {
+      "begin": "\\[",
+      "beginCaptures": { "0": { "name": "punctuation.definition.list.begin.yon" } },
+      "end": "\\]",
+      "endCaptures": { "0": { "name": "punctuation.definition.list.end.yon" } },
+      "patterns": [
+        { "include": "#arrow" },
+        { "include": "#string" },
+        { "include": "#field-typed" },
+        { "include": "#field-plain" },
+        { "include": "#reference-token" },
+        { "include": "#bare-value" },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.yon"
+        }
+      ]
+    },
+
+    "arrow": {
+      "match": "->",
+      "name": "keyword.operator.arrow.yon"
+    },
+
+    "reference-token": {
+      "match": "\\b(rid|block|ref|cfg|file|url|agent|group|role|caps|stream|id|loc|step|rule|check|turn|sess)(:)([A-Za-z0-9_./:@+#-]+)",
+      "captures": {
+        "1": { "name": "support.type.reference-prefix.yon" },
+        "2": { "name": "punctuation.separator.reference.yon" },
+        "3": { "name": "constant.other.reference.yon" }
+      }
+    },
+
+    "level-value": {
+      "match": "\\b(MUST_NOT|MUST|SHOULD|MAY|must_not|must|should|may)\\b",
+      "name": "constant.language.level.yon"
+    },
+
+    "version-suffix": {
+      "match": "@v[0-9]+",
+      "name": "constant.numeric.version.yon"
+    },
+
+    "bare-value": {
+      "match": "[A-Za-z0-9_./:@+#-]+",
+      "name": "string.unquoted.yon"
+    },
+
+    "block-begin-fields": {
+      "patterns": [
+        { "include": "#pipe" },
+        { "include": "#field" },
+        { "include": "#string" },
+        { "include": "#list" },
+        { "include": "#reference-token" },
+        { "include": "#level-value" },
+        { "include": "#version-suffix" },
+        { "include": "#bare-value" }
+      ]
+    },
+
+    "record-fields": {
+      "patterns": [
+        { "include": "#pipe" },
+        { "include": "#field" },
+        { "include": "#string" },
+        { "include": "#list" },
+        { "include": "#arrow" },
+        { "include": "#reference-token" },
+        { "include": "#level-value" },
+        { "include": "#version-suffix" },
+        { "include": "#bare-value" }
+      ]
+    },
+
+    "block-json": {
+      "begin": "^\\s*(@BEGIN)\\s+(JSON(?:C|5)?|json(?:c|5)?|JSONL|jsonl|NDJSON|ndjson)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(JSON(?:C|5)?|json(?:c|5)?|JSONL|jsonl|NDJSON|ndjson)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.json.yon",
+      "patterns": [{ "include": "source.json" }]
+    },
+
+    "block-ts": {
+      "begin": "^\\s*(@BEGIN)\\s+(TS|ts)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(TS|ts)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.ts.yon",
+      "patterns": [{ "include": "source.ts" }]
+    },
+
+    "block-tsx": {
+      "begin": "^\\s*(@BEGIN)\\s+(TSX|tsx)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(TSX|tsx)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.tsx.yon",
+      "patterns": [{ "include": "source.tsx" }]
+    },
+
+    "block-js": {
+      "begin": "^\\s*(@BEGIN)\\s+(JS|js)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(JS|js)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.js.yon",
+      "patterns": [{ "include": "source.js" }]
+    },
+
+    "block-jsx": {
+      "begin": "^\\s*(@BEGIN)\\s+(JSX|jsx)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(JSX|jsx)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.jsx.yon",
+      "patterns": [{ "include": "source.js.jsx" }]
+    },
+
+    "block-css": {
+      "begin": "^\\s*(@BEGIN)\\s+(CSS|css)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(CSS|css)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.css.yon",
+      "patterns": [{ "include": "source.css" }]
+    },
+
+    "block-scss": {
+      "begin": "^\\s*(@BEGIN)\\s+(SCSS|scss)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(SCSS|scss)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.scss.yon",
+      "patterns": [{ "include": "source.css.scss" }]
+    },
+
+    "block-html": {
+      "begin": "^\\s*(@BEGIN)\\s+(HTML|html)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(HTML|html)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.html.yon",
+      "patterns": [{ "include": "text.html.basic" }]
+    },
+
+    "block-md": {
+      "begin": "^\\s*(@BEGIN)\\s+(MD|md|MDX|mdx)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(MD|md|MDX|mdx)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.markdown.yon",
+      "patterns": [{ "include": "text.html.markdown" }]
+    },
+
+    "block-yaml": {
+      "begin": "^\\s*(@BEGIN)\\s+(YAML|yaml|YML|yml)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(YAML|yaml|YML|yml)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.yaml.yon",
+      "patterns": [{ "include": "source.yaml" }]
+    },
+
+    "block-toml": {
+      "begin": "^\\s*(@BEGIN)\\s+(TOML|toml)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(TOML|toml)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.toml.yon",
+      "patterns": [{ "include": "source.toml" }]
+    },
+
+    "block-xml": {
+      "begin": "^\\s*(@BEGIN)\\s+(XML|xml)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(XML|xml)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.xml.yon",
+      "patterns": [{ "include": "text.xml" }]
+    },
+
+    "block-sql": {
+      "begin": "^\\s*(@BEGIN)\\s+(SQL|sql)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(SQL|sql)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.sql.yon",
+      "patterns": [{ "include": "source.sql" }]
+    },
+
+    "block-graphql": {
+      "begin": "^\\s*(@BEGIN)\\s+(GRAPHQL|graphql)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(GRAPHQL|graphql)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.graphql.yon",
+      "patterns": [{ "include": "source.graphql" }]
+    },
+
+    "block-py": {
+      "begin": "^\\s*(@BEGIN)\\s+(PY|py)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(PY|py)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.python.yon",
+      "patterns": [{ "include": "source.python" }]
+    },
+
+    "block-rust": {
+      "begin": "^\\s*(@BEGIN)\\s+(RUST|rust|RS|rs)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(RUST|rust|RS|rs)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.rust.yon",
+      "patterns": [{ "include": "source.rust" }]
+    },
+
+    "block-go": {
+      "begin": "^\\s*(@BEGIN)\\s+(GO|go)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(GO|go)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.go.yon",
+      "patterns": [{ "include": "source.go" }]
+    },
+
+    "block-java": {
+      "begin": "^\\s*(@BEGIN)\\s+(JAVA|java)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(JAVA|java)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.java.yon",
+      "patterns": [{ "include": "source.java" }]
+    },
+
+    "block-kotlin": {
+      "begin": "^\\s*(@BEGIN)\\s+(KT|kt)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(KT|kt)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.kotlin.yon",
+      "patterns": [{ "include": "source.kotlin" }]
+    },
+
+    "block-swift": {
+      "begin": "^\\s*(@BEGIN)\\s+(SWIFT|swift)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(SWIFT|swift)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.swift.yon",
+      "patterns": [{ "include": "source.swift" }]
+    },
+
+    "block-c": {
+      "begin": "^\\s*(@BEGIN)\\s+(C|c|H|h)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(C|c|H|h)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.c.yon",
+      "patterns": [{ "include": "source.c" }]
+    },
+
+    "block-cpp": {
+      "begin": "^\\s*(@BEGIN)\\s+(CPP|cpp|HPP|hpp)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(CPP|cpp|HPP|hpp)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.cpp.yon",
+      "patterns": [{ "include": "source.cpp" }]
+    },
+
+    "block-csharp": {
+      "begin": "^\\s*(@BEGIN)\\s+(CS|cs)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(CS|cs)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.csharp.yon",
+      "patterns": [{ "include": "source.cs" }]
+    },
+
+    "block-ruby": {
+      "begin": "^\\s*(@BEGIN)\\s+(RB|rb)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(RB|rb)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.ruby.yon",
+      "patterns": [{ "include": "source.ruby" }]
+    },
+
+    "block-php": {
+      "begin": "^\\s*(@BEGIN)\\s+(PHP|php)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(PHP|php)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.php.yon",
+      "patterns": [{ "include": "source.php" }]
+    },
+
+    "block-lua": {
+      "begin": "^\\s*(@BEGIN)\\s+(LUA|lua)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(LUA|lua)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.lua.yon",
+      "patterns": [{ "include": "source.lua" }]
+    },
+
+    "block-r": {
+      "begin": "^\\s*(@BEGIN)\\s+(R|r)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(R|r)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.r.yon",
+      "patterns": [{ "include": "source.r" }]
+    },
+
+    "block-bash": {
+      "begin": "^\\s*(@BEGIN)\\s+(BASH|bash|SH|sh|ZSH|zsh)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(BASH|bash|SH|sh|ZSH|zsh)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.shellscript.yon",
+      "patterns": [{ "include": "source.shell" }]
+    },
+
+    "block-ps1": {
+      "begin": "^\\s*(@BEGIN)\\s+(PS1|ps1)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(PS1|ps1)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.powershell.yon",
+      "patterns": [{ "include": "source.powershell" }]
+    },
+
+    "block-diff": {
+      "begin": "^\\s*(@BEGIN)\\s+(DIFF|diff|PATCH|patch)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(DIFF|diff|PATCH|patch)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.diff.yon",
+      "patterns": [{ "include": "source.diff" }]
+    },
+
+    "block-dockerfile": {
+      "begin": "^\\s*(@BEGIN)\\s+(DOCKERFILE|dockerfile)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(DOCKERFILE|dockerfile)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.dockerfile.yon",
+      "patterns": [{ "include": "source.dockerfile" }]
+    },
+
+    "block-terraform": {
+      "begin": "^\\s*(@BEGIN)\\s+(TF|tf)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(TF|tf)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.terraform.yon",
+      "patterns": [{ "include": "source.terraform" }]
+    },
+
+    "block-prisma": {
+      "begin": "^\\s*(@BEGIN)\\s+(PRISMA|prisma)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(PRISMA|prisma)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.prisma.yon",
+      "patterns": [{ "include": "source.prisma" }]
+    },
+
+    "block-proto": {
+      "begin": "^\\s*(@BEGIN)\\s+(PROTO|proto)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(PROTO|proto)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.protobuf.yon",
+      "patterns": [{ "include": "source.proto" }]
+    },
+
+    "block-svg": {
+      "begin": "^\\s*(@BEGIN)\\s+(SVG|svg)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(SVG|svg)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.svg.yon",
+      "patterns": [{ "include": "text.xml" }]
+    },
+
+    "block-csv": {
+      "begin": "^\\s*(@BEGIN)\\s+(CSV|csv|TSV|tsv)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(CSV|csv|TSV|tsv)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.csv.yon"
+    },
+
+    "block-yon": {
+      "begin": "^\\s*(@BEGIN)\\s+(YON|yon)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+(YON|yon)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.yon.yon",
+      "patterns": [{ "include": "source.yon" }]
+    },
+
+    "block-fallback": {
+      "begin": "^\\s*(@BEGIN)\\s+([A-Za-z][A-Za-z0-9_]*)(?:(#)([A-Za-z_][A-Za-z0-9_-]*)|(\\s.*))?$",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "name": "punctuation.separator.hash.yon" },
+        "4": { "name": "entity.name.label.yon" },
+        "5": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "end": "^\\s*(@END)\\s+([A-Za-z][A-Za-z0-9_]*)(.*)$",
+      "endCaptures": {
+        "1": { "name": "keyword.control.block.yon" },
+        "2": { "name": "entity.name.tag.block.yon" },
+        "3": { "patterns": [{ "include": "#block-begin-fields" }] }
+      },
+      "contentName": "meta.embedded.block.plain.yon"
+    }
+  }
+}

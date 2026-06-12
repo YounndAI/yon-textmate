@@ -1,0 +1,63 @@
+{
+  "name": "@younndai/yon-textmate",
+  "description": "TextMate grammar and Shiki integration for YON™ syntax highlighting — editor support for the stream-first YON data format.",
+  "version": "0.1.1",
+  "author": {
+    "name": "MARLINK TRADING SRL (YounndAI)",
+    "url": "https://younndai.com"
+  },
+  "contributors": [
+    {
+      "name": "Alexandru Mareș",
+      "url": "https://allemaar.com"
+    }
+  ],
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vscode-tmgrammar-test": "^0.1.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/shiki.d.ts",
+      "import": "./dist/shiki.js"
+    },
+    "./syntaxes/yon.tmLanguage.json": "./syntaxes/yon.tmLanguage.json",
+    "./language-configuration.json": "./language-configuration.json"
+  },
+  "files": [
+    "dist",
+    "syntaxes",
+    "language-configuration.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "NOTICE",
+    "TRADEMARK.md"
+  ],
+  "homepage": "https://yon.younndai.com",
+  "keywords": [
+    "yon",
+    "younndai",
+    "textmate",
+    "textmate-grammar",
+    "shiki",
+    "syntax-highlighting",
+    "editor-support",
+    "data-format"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/shiki.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YounndAI/yon-textmate.git"
+  },
+  "scripts": {
+    "build": "tsc && node scripts/license-banner.mjs",
+    "test": "npx vscode-tmgrammar-test -g syntaxes/yon.tmLanguage.json tests/*.yon"
+  },
+  "type": "module",
+  "types": "./dist/shiki.d.ts"
+}

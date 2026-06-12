@@ -1,0 +1,33 @@
+# SYNTAX TEST "source.yon" "YON Block Injection"
+
+@DOC ver=2.0 | kind=test | id=test_blocks | title="Block Injection Test"
+
+# Full block syntax (uppercase + pipe fields)
+@BEGIN JSON | rid=block:json-example
+# <- keyword.control.block.yon
+#      ^^^^ entity.name.tag.block.yon
+{
+  "name": "test",
+  "version": 1
+}
+@END JSON | rid=block:json-example
+# <- keyword.control.block.yon
+#    ^^^^ entity.name.tag.block.yon
+
+# Shorthand block syntax (lowercase + hash)
+@BEGIN ts#example
+# <- keyword.control.block.yon
+#      ^^ entity.name.tag.block.yon
+#        ^ punctuation.separator.hash.yon
+#         ^^^^^^^ entity.name.label.yon
+const x: number = 42;
+@END ts#example
+# <- keyword.control.block.yon
+
+# Fallback block (unrecognized tag → plain text)
+@BEGIN CUSTOM | rid=block:custom
+# <- keyword.control.block.yon
+#      ^^^^^^ entity.name.tag.block.yon
+This is plain text inside an unrecognized block type.
+@END CUSTOM | rid=block:custom
+# <- keyword.control.block.yon

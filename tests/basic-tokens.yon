@@ -1,0 +1,31 @@
+# SYNTAX TEST "source.yon" "YON Basic Tokens"
+
+# This is a comment
+# <- punctuation.definition.comment.yon
+
+@DOC ver=2.0 | kind=spec | id=test_basic | title="Basic Token Test"
+# <- keyword.control.tag.yon
+
+@SEC name="Section One"
+# <- keyword.control.tag.yon
+
+@NOTE text="This is a note"
+# <- keyword.control.tag.yon
+
+@RULE lvl=MUST | when="condition" | then="action"
+# <- keyword.control.tag.yon
+
+@STEP n:int=1 | op=std:fs.read@v1
+# <- keyword.control.tag.yon
+
+@MAP id=Pairs | pairs=["key1"->"val1","key2"->"val2"]
+# <- keyword.control.tag.yon
+
+@CFG rid=cfg:example | set=[a=1,b=2]
+# <- keyword.control.tag.yon
+
+@REF id=ref1 | path="skill:testing-patterns"
+# <- keyword.control.tag.yon
+
+@AGENT rid=agent:alpha | caps=caps:alpha_caps | streams=[stream:main]
+#          ^^^^^ support.type.reference-prefix.yon
